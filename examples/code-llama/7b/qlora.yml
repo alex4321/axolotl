@@ -1,7 +1,6 @@
 base_model: codellama/CodeLlama-7b-hf
 model_type: LlamaForCausalLM
 tokenizer_type: CodeLlamaTokenizer
-is_llama_derived_model: true
 
 load_in_8bit: false
 load_in_4bit: true
@@ -11,8 +10,8 @@ datasets:
   - path: mhenrichsen/alpaca_2k_test
     type: alpaca
 dataset_prepared_path:
-val_set_size: 0.01
-output_dir: ./qlora-out
+val_set_size: 0.05
+output_dir: ./outputs/qlora-out
 
 adapter: qlora
 lora_model_dir:
@@ -31,7 +30,7 @@ lora_fan_in_fan_out:
 wandb_project:
 wandb_entity:
 wandb_watch:
-wandb_run_id:
+wandb_name:
 wandb_log_model:
 
 gradient_accumulation_steps: 4
@@ -43,8 +42,8 @@ learning_rate: 0.0002
 
 train_on_inputs: false
 group_by_length: false
-bf16: true
-fp16: false
+bf16: auto
+fp16:
 tf32: false
 
 gradient_checkpointing: true
@@ -56,8 +55,8 @@ xformers_attention:
 flash_attention: true
 
 warmup_steps: 10
-eval_steps: 0.05
-save_steps:
+evals_per_epoch: 4
+saves_per_epoch: 1
 debug:
 deepspeed:
 weight_decay: 0.0

@@ -1,6 +1,5 @@
 """Module for tokenization utilities"""
 
-
 import logging
 
 from termcolor import colored
@@ -8,10 +7,19 @@ from termcolor import colored
 LOG = logging.getLogger("axolotl")
 
 
-def check_dataset_labels(dataset, tokenizer, num_examples=5, text_only=False):
+def check_dataset_labels(
+    dataset,
+    tokenizer,
+    num_examples=5,
+    text_only=False,
+    rl_mode=False,
+):
     # the dataset is already shuffled, so let's just check the first 5 elements
     for idx in range(num_examples):
-        check_example_labels(dataset[idx], tokenizer, text_only=text_only)
+        if not rl_mode:
+            check_example_labels(dataset[idx], tokenizer, text_only=text_only)
+        else:
+            check_rl_example_labels(dataset[idx], tokenizer, text_only=text_only)
 
 
 def check_example_labels(example, tokenizer, text_only=False):
@@ -36,3 +44,69 @@ def check_example_labels(example, tokenizer, text_only=False):
     LOG.info("\n\n\n")
 
     return " ".join(colored_tokens)
+
+
+def color_token_for_rl_debug(decoded_token, encoded_token, color, text_only):
+    """Helper function to color tokens based on their type."""
+    colored_text = colored(decoded_token, color)
+    return (
+        colored_text
+        if text_only
+        else f"{colored_text}{colored(f'({encoded_token})', 'white')}"
+    )
+
+
+def process_tokens_for_rl_debug(tokens, color, tokenizer, text_only):
+    """Helper function to process and color tokens."""
+    colored_tokens = [
+        color_token_for_rl_debug(tokenizer.decode(token), token, color, text_only)
+        for token in tokenizer.encode(tokens, add_special_tokens=False)
+    ]
+    return colored_tokens
+
+
+def check_rl_example_labels(example, tokenizer, text_only=False):
+    field_prompt, field_chosen, field_rejected, field_completion = (
+        "prompt",
+        "chosen",
+        "rejected",
+        "completion",
+    )
+
+    input_tokens = example[field_prompt]
+
+    labels_chosen = example.get(field_chosen)
+    labels_rejected = example.get(field_rejected)
+    labels_completion = example.get(field_completion)
+
+    # Create a delimiter based on text_only flag
+    delimiter = "" if text_only else " "
+
+    # Process and color each type of token
+    colored_tokens = process_tokens_for_rl_debug(
+        input_tokens, "yellow", tokenizer, text_only
+    )
+
+    # Process tokens
+    if labels_completion is None:
+        colored_chosens = process_tokens_for_rl_debug(
+            labels_chosen, "green", tokenizer, text_only
+        )
+        colored_rejecteds = process_tokens_for_rl_debug(
+            labels_rejected, "red", tokenizer, text_only
+        )
+    else:
+        colored_completion = process_tokens_for_rl_debug(
+            labels_completion, "green", tokenizer, text_only
+        )
+
+    # Logging information
+    LOG.info(f"INPUT PROMPT: {delimiter.join(colored_tokens)}\n\n")
+
+    if labels_completion is None:
+        LOG.info(f"CHOSEN RESPONSE: {delimiter.join(colored_chosens)}\n\n")
+        LOG.info(f"REJECTED RESPONSE: {delimiter.join(colored_rejecteds)}\n\n\n")
+    else:
+        LOG.info(f"COMPLETION RESPONSE: {delimiter.join(colored_completion)}\n\n\n")
+
+    return delimiter.join(colored_tokens)

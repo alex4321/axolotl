@@ -1,4 +1,5 @@
 """Module for testing prompt tokenizers."""
+
 import json
 import logging
 import unittest
@@ -6,7 +7,8 @@ from pathlib import Path
 from typing import Optional
 
 import pytest
-from transformers import AutoTokenizer, LlamaTokenizer
+from datasets import load_dataset
+from transformers import AddedToken, AutoTokenizer, LlamaTokenizer
 
 from axolotl.prompt_strategies.alpaca_chat import NoSystemPrompter
 from axolotl.prompt_strategies.alpaca_w_system import (
@@ -17,13 +19,45 @@ from axolotl.prompt_strategies.llama2_chat import (
     Llama2ChatPrompter,
     LLama2ChatTokenizingStrategy,
 )
-from axolotl.prompt_tokenizers import (
-    AlpacaPromptTokenizingStrategy,
-    ShareGPTPromptTokenizingStrategy,
-)
-from axolotl.prompters import AlpacaPrompter, PromptStyle, ShareGPTPrompterV2
+from axolotl.prompt_strategies.orpo.chat_template import load
+from axolotl.prompt_tokenizers import AlpacaPromptTokenizingStrategy
+from axolotl.prompters import AlpacaPrompter, PromptStyle
+from axolotl.utils.dict import DictDefault
 
 LOG = logging.getLogger("axolotl")
+
+test_data = {
+    "multi_turn_sys": {
+        "conversations": [
+            {"from": "system", "value": "lorem"},
+            {"from": "human", "value": "abc"},
+            {"from": "gpt", "value": "ipsum"},
+            {"from": "human", "value": "123"},
+            {"from": "gpt", "value": "sit"},
+        ]
+    },
+    "single_turn_sys": {
+        "conversations": [
+            {"from": "system", "value": "lorem"},
+            {"from": "human", "value": "abc"},
+            {"from": "gpt", "value": "ipsum"},
+        ]
+    },
+    "single_turn_no_sys": {
+        "conversations": [
+            {"from": "human", "value": "abc"},
+            {"from": "gpt", "value": "ipsum"},
+        ]
+    },
+    "multi_turn_no_sys": {
+        "conversations": [
+            {"from": "human", "value": "abc"},
+            {"from": "gpt", "value": "ipsum"},
+            {"from": "human", "value": "123"},
+            {"from": "gpt", "value": "sit"},
+        ]
+    },
+}
 
 
 class TestPromptTokenizationStrategies(unittest.TestCase):
@@ -47,115 +81,6 @@ class TestPromptTokenizationStrategies(unittest.TestCase):
                 "unk_token": "<unk>",
             }
         )
-
-    def test_sharegpt_integration(self):
-        with open(
-            Path(__file__).parent / "fixtures/conversation.json", encoding="utf-8"
-        ) as fin:
-            data = fin.read()
-            conversation = json.loads(data)
-        with open(
-            Path(__file__).parent / "fixtures/conversation.tokenized.json",
-            encoding="utf-8",
-        ) as fin:
-            data = fin.read()
-            tokenized_conversation = json.loads(data)
-        prompter = ShareGPTPrompterV2()
-        strat = ShareGPTPromptTokenizingStrategy(
-            prompter,
-            self.tokenizer,
-            False,
-            2048,
-        )
-        example = strat.tokenize_prompt(conversation)
-        for fields in ["input_ids", "attention_mask", "labels"]:
-            self.assertEqual(len(example[fields]), len(tokenized_conversation[fields]))
-            self.assertEqual(example[fields], tokenized_conversation[fields])
-
-    def test_sharegpt_warnings_integration(self):
-        with open(
-            Path(__file__).parent / "fixtures/conversation.missingturns.json",
-            encoding="utf-8",
-        ) as fin:
-            data = fin.read()
-            conversation = json.loads(data)
-        prompter = ShareGPTPrompterV2()
-        strat = ShareGPTPromptTokenizingStrategy(
-            prompter,
-            self.tokenizer,
-            False,
-            2048,
-        )
-        with self._caplog.at_level(logging.WARNING):
-            strat.tokenize_prompt(conversation)
-            assert "assistant turn has empty text" in self._caplog.records[1].message
-
-    def test_sharegpt_warnings_turns(self):
-        conversation = {
-            "conversations": [
-                {"from": "system", "value": "lorem"},
-                {"from": "gpt", "value": "ipsum"},
-                {"from": "human", "value": "dolor"},
-                {"from": "human", "value": "dolor"},
-                {"from": "gpt", "value": "sit"},
-            ]
-        }
-        prompter = ShareGPTPrompterV2()
-        strat = ShareGPTPromptTokenizingStrategy(
-            prompter,
-            self.tokenizer,
-            False,
-            2048,
-        )
-        with self._caplog.at_level(logging.WARNING):
-            strat.tokenize_prompt(conversation)
-            assert (
-                "Role did not alternate between turns (gpt and human)"
-                in self._caplog.records[0].message
-            )
-
-    def test_sharegpt_changes_roles(self):
-        conversation = {
-            "roles": ["USER", "CHARACTER"],
-            "conversations": [
-                {"from": "system", "value": "lorem"},
-                {"from": "gpt", "value": "ipsum"},
-                {"from": "human", "value": "dolor"},
-                {"from": "gpt", "value": "sit"},
-            ],
-        }
-        prompter = ShareGPTPrompterV2()
-        strat = ShareGPTPromptTokenizingStrategy(
-            prompter,
-            self.tokenizer,
-            False,
-            2048,
-        )
-        with self._caplog.at_level(logging.WARNING):
-            res = strat.tokenize_prompt(conversation)
-            assert "CHARACTER" in self.tokenizer.decode(res["input_ids"])
-
-    def test_sharegpt_assistant_label_ignore(self):
-        conversation = {
-            "roles": ["user", "assistant"],
-            "conversations": [
-                {"from": "system", "value": "lorem"},
-                {"from": "gpt", "value": "ipsum"},
-                {"from": "human", "value": "dolor"},
-                {"from": "gpt", "value": "sit"},
-            ],
-        }
-        prompter = ShareGPTPrompterV2()
-        strat = ShareGPTPromptTokenizingStrategy(
-            prompter,
-            self.tokenizer,
-            False,
-            2048,
-        )
-        with self._caplog.at_level(logging.WARNING):
-            res = strat.tokenize_prompt(conversation)
-            idx = res["input_ids"].index(20255)  # assistant token
-            assert res["labels"][idx] == -100
 
     def test_no_sys_prompt(self):
         """
@@ -316,6 +241,60 @@ If a question does not make any sense, or is not factually coherent, explain why
         self.assertEqual(
             hf_tokens, tokenized_conversation["input_ids"][: len(hf_tokens)]
         )
+
+
+class OrpoTokenizationTest(unittest.TestCase):
+    """test case for the ORPO tokenization"""
+
+    def setUp(self) -> None:
+        # pylint: disable=duplicate-code
+        tokenizer = LlamaTokenizer.from_pretrained(
+            "casperhansen/mistral-7b-instruct-v0.1-awq"
+        )
+        tokenizer.add_special_tokens(
+            {
+                "eos_token": AddedToken(
+                    "<|im_end|>", rstrip=False, lstrip=False, normalized=False
+                )
+            }
+        )
+        tokenizer.add_tokens(
+            [
+                AddedToken(
+                    "<|im_start|>", rstrip=False, lstrip=False, normalized=False
+                ),
+            ]
+        )
+        self.tokenizer = tokenizer
+        self.dataset = load_dataset(
+            "argilla/ultrafeedback-binarized-preferences-cleaned", split="train"
+        ).select([0])
+
+    def test_orpo_integration(self):
+        strat = load(
+            self.tokenizer,
+            DictDefault({"train_on_inputs": False}),
+            DictDefault({"chat_template": "chatml"}),
+        )
+        res = strat.tokenize_prompt(self.dataset[0])
+        assert "rejected_input_ids" in res
+        assert "rejected_labels" in res
+        assert "input_ids" in res
+        assert "labels" in res
+        assert "prompt_attention_mask" in res
+
+        assert len(res["rejected_input_ids"]) == len(res["rejected_labels"])
+        assert len(res["input_ids"]) == len(res["labels"])
+        assert len(res["input_ids"]) == len(res["prompt_attention_mask"])
+
+        assert res["rejected_labels"][0] == -100
+        assert res["rejected_input_ids"][-1] == res["rejected_labels"][-1]
+
+        assert res["labels"][0] == -100
+        assert res["input_ids"][-1] == res["labels"][-1]
+
+        assert res["prompt_attention_mask"][0] == 1
+        assert res["prompt_attention_mask"][-1] == 0
 
 
 if __name__ == "__main__":

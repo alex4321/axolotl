@@ -3,9 +3,11 @@ CLI to shard a trained model into 10GiB chunks
 """
 import logging
 from pathlib import Path
+from typing import Union
 
 import fire
 import transformers
+from dotenv import load_dotenv
 
 from axolotl.cli import load_cfg, print_axolotl_text_art
 from axolotl.common.cli import TrainerCliArgs, load_model_and_tokenizer
@@ -25,7 +27,7 @@ def shard(
     model.save_pretrained(cfg.output_dir, safe_serialization=safe_serialization)
 
 
-def do_cli(config: Path = Path("examples/"), **kwargs):
+def do_cli(config: Union[Path, str] = Path("examples/"), **kwargs):
     # pylint: disable=duplicate-code
     print_axolotl_text_art()
     parsed_cfg = load_cfg(config, **kwargs)
@@ -39,4 +41,5 @@ def do_cli(config: Path = Path("examples/"), **kwargs):
 
 
 if __name__ == "__main__":
+    load_dotenv()
     fire.Fire(do_cli)

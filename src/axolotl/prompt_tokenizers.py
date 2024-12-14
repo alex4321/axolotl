@@ -1,17 +1,12 @@
 """Module containing PromptTokenizingStrategy and Prompter classes"""
 
 import abc
-import copy
 import logging
 from typing import Dict, List, Tuple, Union
 
-from fastchat.conversation import Conversation
 from transformers import BatchEncoding, PreTrainedTokenizer
 
-from axolotl.monkeypatch.fastchat_conversation_turns import (
-    add_get_turns_to_conversation,
-)
-from axolotl.prompters import IGNORE_TOKEN_ID
+from axolotl.prompters import Prompter
 
 LOG = logging.getLogger("axolotl")
 
@@ -21,12 +16,16 @@ LLAMA_DEFAULT_EOS_TOKEN = "</s>"  # nosec
 LLAMA_DEFAULT_BOS_TOKEN = "<s>"  # nosec
 LLAMA_DEFAULT_UNK_TOKEN = "<unk>"  # nosec
 
-add_get_turns_to_conversation()
-
 
 class InvalidDataException(Exception):
     """
     Exception raised when the data is invalid
+    """
+
+
+class DatasetWrappingStrategy(abc.ABC):
+    """
+    Abstract class for wrapping datasets for Chat Messages
     """
 
 
@@ -37,7 +36,7 @@ class PromptTokenizingStrategy(abc.ABC):
 
     def __init__(
         self,
-        prompter,
+        prompter: Prompter,
         tokenizer,
         train_on_inputs: bool = False,
         sequence_len: int = 2048,
@@ -323,112 +322,6 @@ class AlpacaReflectionPTStrategy(ReflectionPromptTokenizingStrategy):
             prompt["reflection"],
             prompt["corrected"],
         )
-
-
-class ShareGPTPromptTokenizingStrategy(PromptTokenizingStrategy):
-    """
-    Tokenizing strategy for ShareGPT prompts.
-    """
-
-    def get_conversation_thread(self, prompt):
-        return prompt["conversations"]
-
-    def tokenize_prompt(self, prompt):
-        # Initial values. We will append to these as we go through the conversation.
-        result, current_len = tokenize_prompt_default()
-        conversation: Conversation = (
-            self.prompter._conversation.copy()  # pylint: disable=protected-access
-        )
-
-        # support for custom roles from the dataset, only useful for vicuna style prompts/roles
-        role_remap = []
-        if (
-            conversation.name == "vicuna_v1.1"
-            and "roles" in prompt
-            and len(prompt["roles"]) >= 2
-        ):
-            role_remap = [
-                {"from": conversation.roles[0], "to": prompt["roles"][0]},
-                {"from": conversation.roles[1], "to": prompt["roles"][1]},
-            ]
-
-        try:
-            for _, part in enumerate(
-                self.prompter.build_prompt(self.get_conversation_thread(prompt))
-            ):
-                if not isinstance(part, tuple):
-                    LOG.warning(f"expected tuple, got {part}")
-                    continue
-
-                user, assistant = conversation.roles
-                role, content = part
-
-                # Uses "in" because role contains extra characters
-                if user in role:
-                    role = (
-                        role.replace(role_remap[0]["from"], role_remap[0]["to"])
-                        if role_remap
-                        else role
-                    )
-                    turn = role + content
-                    # this is still the user query, we should
-                    if not content.strip():
-                        LOG.warning(f"user turn has empty text: {prompt}")
-                    res = self._tokenize(
-                        turn,
-                        add_eos_token=False,
-                        strip_bos_token=True,
-                    )
-                    # everything from this is masked out from the labels
-                    labels = [IGNORE_TOKEN_ID] * len(res["input_ids"])
-                elif assistant in role:
-                    # TODO label assistant token/tokens w/ IGNORE_TOKEN_ID
-                    role = (
-                        role.replace(role_remap[1]["from"], role_remap[1]["to"])
-                        if role_remap
-                        else role
-                    )
-                    turn = role + content
-                    # this should be the assistant response, should end with an eos token
-                    if not content.strip():
-                        LOG.warning(f"assistant turn has empty text: {prompt}")
-                    res = self._tokenize(
-                        turn,
-                        add_eos_token=True,
-                        strip_bos_token=True,
-                    )
-                    role_res = self._tokenize(
-                        role.rstrip(),
-                        add_eos_token=False,
-                        strip_bos_token=True,
-                    )
-                    # not masked out from labels
-                    labels = copy.deepcopy(res["input_ids"])
-                    len_role = len(role_res["input_ids"])
-                    labels[:len_role] = [IGNORE_TOKEN_ID] * min(len_role, len(labels))
-                elif role == "":
-                    turn = content
-                    # this is only ever the first part, should include the bos token and the user query
-                    res = self._tokenize(
-                        turn, add_eos_token=False, strip_bos_token=False
-                    )
-                    # everything from this is masked out from the labels
-                    labels = [IGNORE_TOKEN_ID] * len(res["input_ids"])
-                else:
-                    LOG.warning(f"unhandled role: {role}")
-                    continue
-
-                # pylint: disable=duplicate-code
-                result, current_len = parse_tokenized_to_result(
-                    result,
-                    current_len,
-                    res,
-                    labels,
-                    pad_token_id=self.tokenizer.pad_token_id,
-                )
-            return result
-        except (KeyError, AssertionError, IndexError) as err:
-            raise InvalidDataException(str(err)) from err
 
 
 def tokenize_prompt_default() -> Tuple[Dict[str, List[int]], int]:

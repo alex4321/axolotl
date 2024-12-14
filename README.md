@@ -1,4 +1,25 @@
-# Axolotl
+<p align="center">
+    <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="image/axolotl_logo_digital_white.svg">
+        <source media="(prefers-color-scheme: light)" srcset="image/axolotl_logo_digital_black.svg">
+        <img alt="Axolotl" src="image/axolotl_logo_digital_black.svg" width="400" height="104" style="max-width: 100%;">
+    </picture>
+</p>
+
+<p align="center">
+    <img src="https://img.shields.io/github/license/axolotl-ai-cloud/axolotl.svg?color=blue" alt="GitHub License">
+    <img src="https://github.com/axolotl-ai-cloud/axolotl/actions/workflows/tests.yml/badge.svg" alt="tests">
+    <a href="https://github.com/axolotl-ai-cloud/axolotl/releases"><img src="https://img.shields.io/github/release/axolotl-ai-cloud/axolotl.svg" alt="Releases"></a>
+    <br/>
+    <a href="https://github.com/axolotl-ai-cloud/axolotl/graphs/contributors"><img src="https://img.shields.io/github/contributors-anon/axolotl-ai-cloud/axolotl?color=yellow&style=flat-square" alt="contributors" style="height: 20px;"></a>
+    <img src="https://img.shields.io/github/stars/axolotl-ai-cloud/axolotl" alt="GitHub Repo stars">
+    <br/>
+    <a href="https://discord.com/invite/HhrNrHJPRb"><img src="https://img.shields.io/badge/discord-7289da.svg?style=flat-square&logo=discord" alt="discord" style="height: 20px;"></a>
+    <a href="https://twitter.com/axolotl_ai"><img src="https://img.shields.io/twitter/follow/axolotl_ai?style=social" alt="twitter" style="height: 20px;"></a>
+    <br/>
+    <img src="https://github.com/axolotl-ai-cloud/axolotl/actions/workflows/tests-nightly.yml/badge.svg" alt="tests-nightly">
+    <img src="https://github.com/axolotl-ai-cloud/axolotl/actions/workflows/multi-gpu-e2e.yml/badge.svg" alt="multigpu-semi-weekly tests">
+</p>
 
 Axolotl is a tool designed to streamline the fine-tuning of various AI models, offering support for multiple configurations and architectures.
 
@@ -7,44 +28,67 @@ Features:
 - Supports fullfinetune, lora, qlora, relora, and gptq
 - Customize configurations using a simple yaml file or CLI overwrite
 - Load different dataset formats, use custom formats, or bring your own tokenized datasets
-- Integrated with xformer, flash attention, rope scaling, and multipacking
+- Integrated with xformer, flash attention, [liger kernel](https://github.com/linkedin/Liger-Kernel), rope scaling, and multipacking
 - Works with single GPU or multiple GPUs via FSDP or Deepspeed
 - Easily run with Docker locally or on the cloud
-- Log results and optionally checkpoints to wandb
+- Log results and optionally checkpoints to wandb, mlflow or Comet
 - And more!
 
+<a href="https://www.phorm.ai/query?projectId=e315ba4a-4e14-421f-ab05-38a1f9076f25">
+  <img alt="phorm.ai" src="https://img.shields.io/badge/Phorm-Ask_AI-%23F2777A.svg?&logo=data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNSIgaGVpZ2h0PSI0IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgogIDxwYXRoIGQ9Ik00LjQzIDEuODgyYTEuNDQgMS40NCAwIDAgMS0uMDk4LjQyNmMtLjA1LjEyMy0uMTE1LjIzLS4xOTIuMzIyLS4wNzUuMDktLjE2LjE2NS0uMjU1LjIyNmExLjM1MyAxLjM1MyAwIDAgMS0uNTk1LjIxMmMtLjA5OS4wMTItLjE5Mi4wMTQtLjI3OS4wMDZsLTEuNTkzLS4xNHYtLjQwNmgxLjY1OGMuMDkuMDAxLjE3LS4xNjkuMjQ2LS4xOTFhLjYwMy42MDMgMCAwIDAgLjItLjEwNi41MjkuNTI5IDAgMCAwIC4xMzgtLjE3LjY1NC42NTQgMCAwIDAgLjA2NS0uMjRsLjAyOC0uMzJhLjkzLjkzIDAgMCAwLS4wMzYtLjI0OS41NjcuNTY3IDAgMCAwLS4xMDMtLjIuNTAyLjUwMiAwIDAgMC0uMTY4LS4xMzguNjA4LjYwOCAwIDAgMC0uMjQtLjA2N0wyLjQzNy43MjkgMS42MjUuNjcxYS4zMjIuMzIyIDAgMCAwLS4yMzIuMDU4LjM3NS4zNzUgMCAwIDAtLjExNi4yMzJsLS4xMTYgMS40NS0uMDU4LjY5Ny0uMDU4Ljc1NEwuNzA1IDRsLS4zNTctLjA3OUwuNjAyLjkwNkMuNjE3LjcyNi42NjMuNTc0LjczOS40NTRhLjk1OC45NTggMCAwIDEgLjI3NC0uMjg1Ljk3MS45NzEgMCAwIDEgLjMzNy0uMTRjLjExOS0uMDI2LjIyNy0uMDM0LjMyNS0uMDI2TDMuMjMyLjE2Yy4xNTkuMDE0LjMzNi4wMy40NTkuMDgyYTEuMTczIDEuMTczIDAgMCAxIC41NDUuNDQ3Yy4wNi4wOTQuMTA5LjE5Mi4xNDQuMjkzYTEuMzkyIDEuMzkyIDAgMCAxIC4wNzguNThsLS4wMjkuMzJaIiBmaWxsPSIjRjI3NzdBIi8+CiAgPHBhdGggZD0iTTQuMDgyIDIuMDA3YTEuNDU1IDEuNDU1IDAgMCAxLS4wOTguNDI3Yy0uMDUuMTI0LS4xMTQuMjMyLS4xOTIuMzI0YTEuMTMgMS4xMyAwIDAgMS0uMjU0LjIyNyAxLjM1MyAxLjM1MyAwIDAgMS0uNTk1LjIxNGMtLjEuMDEyLS4xOTMuMDE0LS4yOC4wMDZsLTEuNTYtLjEwOC4wMzQtLjQwNi4wMy0uMzQ4IDEuNTU5LjE1NGMuMDkgMCAuMTczLS4wMS4yNDgtLjAzM2EuNjAzLjYwMyAwIDAgMCAuMi0uMTA2LjUzMi41MzIgMCAwIDAgLjEzOS0uMTcyLjY2LjY2IDAgMCAwIC4wNjQtLjI0MWwuMDI5LS4zMjFhLjk0Ljk0IDAgMCAwLS4wMzYtLjI1LjU3LjU3IDAgMCAwLS4xMDMtLjIwMi41MDIuNTAyIDAgMCAwLS4xNjgtLjEzOC42MDUuNjA1IDAgMCAwLS4yNC0uMDY3TDEuMjczLjgyN2MtLjA5NC0uMDA4LS4xNjguMDEtLjIyMS4wNTUtLjA1My4wNDUtLjA4NC4xMTQtLjA5Mi4yMDZMLjcwNSA0IDAgMy45MzhsLjI1NS0yLjkxMUExLjAxIDEuMDEgMCAwIDEgLjM5My41NzIuOTYyLjk2MiAwIDAgMSAuNjY2LjI4NmEuOTcuOTcgMCAwIDEgLjMzOC0uMTRDMS4xMjIuMTIgMS4yMy4xMSAxLjMyOC4xMTlsMS41OTMuMTRjLjE2LjAxNC4zLjA0Ny40MjMuMWExLjE3IDEuMTcgMCAwIDEgLjU0NS40NDhjLjA2MS4wOTUuMTA5LjE5My4xNDQuMjk1YTEuNDA2IDEuNDA2IDAgMCAxIC4wNzcuNTgzbC0uMDI4LjMyMloiIGZpbGw9IndoaXRlIi8+CiAgPHBhdGggZD0iTTQuMDgyIDIuMDA3YTEuNDU1IDEuNDU1IDAgMCAxLS4wOTguNDI3Yy0uMDUuMTI0LS4xMTQuMjMyLS4xOTIuMzI0YTEuMTMgMS4xMyAwIDAgMS0uMjU0LjIyNyAxLjM1MyAxLjM1MyAwIDAgMS0uNTk1LjIxNGMtLjEuMDEyLS4xOTMuMDE0LS4yOC4wMDZsLTEuNTYtLjEwOC4wMzQtLjQwNi4wMy0uMzQ4IDEuNTU5LjE1NGMuMDkgMCAuMTczLS4wMS4yNDgtLjAzM2EuNjAzLjYwMyAwIDAgMCAuMi0uMTA2LjUzMi41MzIgMCAwIDAgLjEzOS0uMTcyLjY2LjY2IDAgMCAwIC4wNjQtLjI0MWwuMDI5LS4zMjFhLjk0Ljk0IDAgMCAwLS4wMzYtLjI1LjU3LjU3IDAgMCAwLS4xMDMtLjIwMi41MDIuNTAyIDAgMCAwLS4xNjgtLjEzOC42MDUuNjA1IDAgMCAwLS4yNC0uMDY3TDEuMjczLjgyN2MtLjA5NC0uMDA4LS4xNjguMDEtLjIyMS4wNTUtLjA1My4wNDUtLjA4NC4xMTQtLjA5Mi4yMDZMLjcwNSA0IDAgMy45MzhsLjI1NS0yLjkxMUExLjAxIDEuMDEgMCAwIDEgLjM5My41NzIuOTYyLjk2MiAwIDAgMSAuNjY2LjI4NmEuOTcuOTcgMCAwIDEgLjMzOC0uMTRDMS4xMjIuMTIgMS4yMy4xMSAxLjMyOC4xMTlsMS41OTMuMTRjLjE2LjAxNC4zLjA0Ny40MjMuMWExLjE3IDEuMTcgMCAwIDEgLjU0NS40NDhjLjA2MS4wOTUuMTA5LjE5My4xNDQuMjk1YTEuNDA2IDEuNDA2IDAgMCAxIC4wNzcuNTgzbC0uMDI4LjMyMloiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo=">
+</a>
 
 <table>
 <tr>
 <td>
 
 ## Table of Contents
-- [Introduction](#axolotl)
-- [Supported Features](#axolotl-supports)
-- [Quickstart](#quickstart-)
-- [Installation](#installation)
-  - [Docker](#docker)
-  - [Conda/Pip venv](#condapip-venv)
-  - [LambdaLabs](#lambdalabs)
-  - [Windows](#windows)
-- [Dataset](#dataset)
-  - [How to Add Custom Prompts](#how-to-add-custom-prompts)
-  - [How to Use Custom Pretokenized Dataset](#how-to-use-your-custom-pretokenized-dataset)
-- [Config](#config)
-  - [Train](#train)
-  - [Inference](#inference)
-  - [Merge LORA to Base](#merge-lora-to-base)
-- [Common Errors](#common-errors-)
-- [Need Help?](#need-help-)
-- [Badge](#badge-)
-- [Community Showcase](#community-showcase)
-- [Contributing](#contributing-)
+- [Axolotl](#axolotl)
+  - [Table of Contents](#table-of-contents)
+  - [Quickstart ⚡](#quickstart-)
+    - [Edge Builds](#edge-builds-)
+    - [Axolotl CLI Usage](#axolotl-cli-usage)
+  - [Badge ❤🏷️](#badge-️)
+  - [Contributing 🤝](#contributing-)
+  - [Sponsors 🤝❤](#sponsors-)
+  - [Axolotl supports](#axolotl-supports)
+  - [Advanced Setup](#advanced-setup)
+    - [Environment](#environment)
+      - [Docker](#docker)
+      - [Conda/Pip venv](#condapip-venv)
+      - [Cloud GPU](#cloud-gpu)
+      - [Bare Metal Cloud GPU](#bare-metal-cloud-gpu)
+        - [LambdaLabs](#lambdalabs)
+        - [GCP](#gcp)
+      - [Windows](#windows)
+      - [Mac](#mac)
+      - [Google Colab](#google-colab)
+      - [Launching on public clouds via SkyPilot](#launching-on-public-clouds-via-skypilot)
+      - [Launching on public clouds via dstack](#launching-on-public-clouds-via-dstack)
+    - [Dataset](#dataset)
+    - [Config](#config)
+      - [All Config Options](#all-config-options)
+    - [Train](#train)
+      - [Preprocess dataset](#preprocess-dataset)
+      - [Multi-GPU](#multi-gpu)
+        - [DeepSpeed](#deepspeed)
+        - [FSDP](#fsdp)
+        - [FSDP + QLoRA](#fsdp--qlora)
+        - [Weights \& Biases Logging](#weights--biases-logging)
+        - [Special Tokens](#special-tokens)
+      - [Liger Kernel](#liger-kernel)
+    - [Inference Playground](#inference-playground)
+    - [Merge LORA to base](#merge-lora-to-base)
+  - [Common Errors 🧰](#common-errors-)
+    - [Tokenization Mismatch b/w Inference \& Training](#tokenization-mismatch-bw-inference--training)
+  - [Debugging Axolotl](#debugging-axolotl)
+  - [Need help? 🙋](#need-help-)
 
 </td>
 <td>
 
 <div align="center">
-  <img src="image/axolotl.png" alt="axolotl" width="160">
+  <img src="image/axolotl_symbol_digital_white.svg" alt="axolotl" width="160">
   <div>
     <p>
       <b>Axolotl provides a unified repository for fine-tuning <br />a variety of AI models with ease</b>
@@ -52,8 +96,8 @@ Features:
     <p>
       Go ahead and Axolotl questions!!
     </p>
-    <img src="https://github.com/OpenAccess-AI-Collective/axolotl/actions/workflows/pre-commit.yml/badge.svg?branch=main" alt="pre-commit">
-    <img alt="PyTest Status" src="https://github.com/OpenAccess-AI-Collective/axolotl/actions/workflows/tests.yml/badge.svg?branch=main">
+    <img src="https://github.com/axolotl-ai-cloud/axolotl/actions/workflows/pre-commit.yml/badge.svg?branch=main" alt="pre-commit">
+    <img alt="PyTest Status" src="https://github.com/axolotl-ai-cloud/axolotl/actions/workflows/tests.yml/badge.svg?branch=main">
   </div>
 </div>
 
@@ -61,58 +105,191 @@ Features:
 </tr>
 </table>
 
-## Axolotl supports
-
-|          | fp16/fp32 | lora | qlora | gptq | gptq w/flash attn | flash attn | xformers attn |
-|----------|:----------|:-----|-------|------|-------------------|------------|--------------|
-| llama    | ✅         | ✅    | ✅     | ✅             | ✅                 | ✅          | ✅            |
-| Pythia   | ✅         | ✅    | ✅     | ❌             | ❌                 | ❌          | ❓            |
-| cerebras | ✅         | ✅    | ✅     | ❌             | ❌                 | ❌          | ❓            |
-| btlm     | ✅         | ✅    | ✅     | ❌             | ❌                 | ❌          | ❓            |
-| mpt      | ✅         | ❌    | ❓     | ❌             | ❌                 | ❌          | ❓            |
-| falcon   | ✅         | ✅    | ✅     | ❌             | ❌                 | ❌          | ❓            |
-| gpt-j    | ✅         | ✅    | ✅     | ❌             | ❌                 | ❓          | ❓            |
-| XGen     | ✅         | ❓    | ✅     | ❓             | ❓                 | ❓          | ✅            |
-| phi      | ✅         | ✅    | ✅     | ❓             | ❓                 | ❓          | ❓            |
-
-
 ## Quickstart ⚡
 
 Get started with Axolotl in just a few steps! This quickstart guide will walk you through setting up and running a basic fine-tuning task.
 
-**Requirements**: Python >=3.9 and Pytorch >=2.0.
+**Requirements**: *Nvidia* GPU (Ampere architecture or newer for `bf16` and Flash Attention) or *AMD* GPU, Python >=3.10 and PyTorch >=2.3.1.
 
 ```bash
-git clone https://github.com/OpenAccess-AI-Collective/axolotl
-cd axolotl
+pip3 install --no-build-isolation axolotl[flash-attn,deepspeed]
 
-pip3 install packaging
-pip3 install -e '.[flash-attn,deepspeed]'
-pip3 install -U git+https://github.com/huggingface/peft.git
+# download examples and optionally deepspeed configs to the local path
+axolotl fetch examples
+axolotl fetch deepspeed_configs  # OPTIONAL
 
-# finetune lora
-accelerate launch -m axolotl.cli.train examples/openllama-3b/lora.yml
-
-# inference
-accelerate launch -m axolotl.cli.inference examples/openllama-3b/lora.yml \
-    --lora_model_dir="./lora-out"
+# finetune using lora
+axolotl train examples/llama-3/lora-1b.yml
 ```
 
-## Installation
+### Edge Builds 🏎️
+
+If you're looking for the latest features and updates between releases, you'll need to install
+from source.
+
+```bash
+git clone https://github.com/axolotl-ai-cloud/axolotl.git
+cd axolotl
+pip3 install packaging ninja
+pip3 install --no-build-isolation -e '.[flash-attn,deepspeed]'
+```
+
+### Axolotl CLI Usage
+We now support a new, more streamlined CLI using [click](https://click.palletsprojects.com/en/stable/).
+
+```bash
+# preprocess datasets - optional but recommended
+CUDA_VISIBLE_DEVICES="0" axolotl preprocess examples/llama-3/lora-1b.yml
+
+# finetune lora
+axolotl train examples/llama-3/lora-1b.yml
+
+# inference
+axolotl inference examples/llama-3/lora-1b.yml \
+    --lora-model-dir="./outputs/lora-out"
+
+# gradio
+axolotl inference examples/llama-3/lora-1b.yml \
+    --lora-model-dir="./outputs/lora-out" --gradio
+
+# remote yaml files - the yaml config can be hosted on a public URL
+# Note: the yaml config must directly link to the **raw** yaml
+axolotl train https://raw.githubusercontent.com/axolotl-ai-cloud/axolotl/main/examples/llama-3/lora-1b.yml
+```
+
+We've also added a new command for fetching `examples` and `deepspeed_configs` to your
+local machine. This will come in handy when installing `axolotl` from PyPI.
+
+```bash
+# Fetch example YAML files (stores in "examples/" folder)
+axolotl fetch examples
+
+# Fetch deepspeed config files (stores in "deepspeed_configs/" folder)
+axolotl fetch deepspeed_configs
+
+# Optionally, specify a destination folder
+axolotl fetch examples --dest path/to/folder
+```
+
+### Legacy Usage
+<details>
+
+<summary>Click to Expand</summary>
+
+While the Axolotl CLI is the preferred method for interacting with axolotl, we
+still support the legacy `-m axolotl.cli.*` usage.
+
+```bash
+# preprocess datasets - optional but recommended
+CUDA_VISIBLE_DEVICES="0" python -m axolotl.cli.preprocess examples/llama-3/lora-1b.yml
+
+# finetune lora
+accelerate launch -m axolotl.cli.train examples/llama-3/lora-1b.yml
+
+# inference
+accelerate launch -m axolotl.cli.inference examples/llama-3/lora-1b.yml \
+    --lora_model_dir="./outputs/lora-out"
+
+# gradio
+accelerate launch -m axolotl.cli.inference examples/llama-3/lora-1b.yml \
+    --lora_model_dir="./outputs/lora-out" --gradio
+
+# remote yaml files - the yaml config can be hosted on a public URL
+# Note: the yaml config must directly link to the **raw** yaml
+accelerate launch -m axolotl.cli.train https://raw.githubusercontent.com/axolotl-ai-cloud/axolotl/main/examples/llama-3/lora-1b.yml
+```
+
+</details>
+
+## Badge ❤🏷️
+
+Building something cool with Axolotl? Consider adding a badge to your model card.
+
+```markdown
+[<img src="https://raw.githubusercontent.com/axolotl-ai-cloud/axolotl/main/image/axolotl-badge-web.png" alt="Built with Axolotl" width="200" height="32"/>](https://github.com/axolotl-ai-cloud/axolotl)
+```
+
+[<img src="https://raw.githubusercontent.com/axolotl-ai-cloud/axolotl/main/image/axolotl-badge-web.png" alt="Built with Axolotl" width="200" height="32"/>](https://github.com/axolotl-ai-cloud/axolotl)
+
+## Sponsors 🤝❤
+
+If you love axolotl, consider sponsoring the project by reaching out directly to [wing@axolotl.ai](mailto:wing@axolotl.ai).
+
+---
+
+- [Modal](https://modal.com/) Modal lets you run data/AI jobs in the cloud, by just writing a few lines of Python. Customers use Modal to deploy Gen AI models at large scale, fine-tune LLM models, run protein folding simulations, and much more.
+
+---
+
+## Contributing 🤝
+
+Please read the [contributing guide](./.github/CONTRIBUTING.md)
+
+Bugs? Please check the [open issues](https://github.com/axolotl-ai-cloud/axolotl/issues/bug) else create a new Issue.
+
+PRs are **greatly welcome**!
+
+Please run the quickstart instructions followed by the below to setup env:
+```bash
+pip3 install -r requirements-dev.txt -r requirements-tests.txt
+pre-commit install
+
+# test
+pytest tests/
+
+# optional: run against all files
+pre-commit run --all-files
+```
+
+Thanks to all of our contributors to date. Help drive open source AI progress forward by contributing to Axolotl.
+
+<a href="https://github.com/axolotl-ai-cloud/axolotl/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=openaccess-ai-collective/axolotl" alt="contributor chart by https://contrib.rocks"/>
+</a>
+
+## Axolotl supports
+
+|             | fp16/fp32 | lora | qlora | gptq | gptq w/flash attn | flash attn | xformers attn |
+|-------------|:----------|:-----|-------|------|-------------------|------------|--------------|
+| llama       | ✅         | ✅    | ✅     | ✅             | ✅                 | ✅          | ✅            |
+| Mistral     | ✅         | ✅    | ✅     | ✅             | ✅                 | ✅          | ✅            |
+| Mixtral-MoE | ✅         | ✅    | ✅     | ❓             | ❓                 | ❓          | ❓            |
+| Mixtral8X22 | ✅         | ✅    | ✅     | ❓             | ❓                 | ❓          | ❓            |
+| Pythia      | ✅         | ✅    | ✅     | ❌             | ❌                 | ❌          | ❓            |
+| cerebras    | ✅         | ✅    | ✅     | ❌             | ❌                 | ❌          | ❓            |
+| btlm        | ✅         | ✅    | ✅     | ❌             | ❌                 | ❌          | ❓            |
+| mpt         | ✅         | ❌    | ❓     | ❌             | ❌                 | ❌          | ❓            |
+| falcon      | ✅         | ✅    | ✅     | ❌             | ❌                 | ❌          | ❓            |
+| gpt-j       | ✅         | ✅    | ✅     | ❌             | ❌                 | ❓          | ❓            |
+| XGen        | ✅         | ❓    | ✅     | ❓             | ❓                 | ❓          | ✅            |
+| phi         | ✅         | ✅    | ✅     | ❓             | ❓                 | ❓          | ❓            |
+| RWKV        | ✅         | ❓    | ❓     | ❓             | ❓                 | ❓          | ❓            |
+| Qwen        | ✅         | ✅    | ✅     | ❓             | ❓                 | ❓          | ❓            |
+| Gemma       | ✅         | ✅    | ✅     | ❓             | ❓                 | ✅          | ❓            |
+| Jamba       | ✅         | ✅    | ✅     | ❓             | ❓                 | ✅          | ❓            |
+
+✅: supported
+❌: not supported
+❓: untested
+
+## Advanced Setup
 
 ### Environment
 
 #### Docker
+
   ```bash
-  docker run --gpus '"all"' --rm -it winglian/axolotl:main-py3.10-cu118-2.0.1
+  docker run --gpus '"all"' --rm -it axolotlai/axolotl:main-latest
   ```
-  - `winglian/axolotl-runpod:main-latest`: for runpod or use this [direct link](https://runpod.io/gsc?template=v2ickqhz9s&ref=6i7fkpdz)
 
   Or run on the current files for development:
 
   ```sh
   docker compose up -d
   ```
+
+>[!Tip]
+> If you want to debug axolotl or prefer to use Docker as your development environment, see the [debugging guide's section on Docker](docs/debugging.qmd#debugging-with-docker).
 
   <details>
 
@@ -121,27 +298,29 @@ accelerate launch -m axolotl.cli.inference examples/openllama-3b/lora.yml \
   A more powerful Docker command to run would be this:
 
   ```bash
-  docker run --gpus '"all"' --rm -it --name axolotl --ipc=host --ulimit memlock=-1 --ulimit stack=67108864 --mount type=volume,src=axolotl,target=/workspace/axolotl -v ${HOME}/.cache/huggingface:/root/.cache/huggingface winglian/axolotl:main-py3.10-cu118-2.0.1
+docker run --privileged --gpus '"all"' --shm-size 10g --rm -it --name axolotl --ipc=host --ulimit memlock=-1 --ulimit stack=67108864 --mount type=bind,src="${PWD}",target=/workspace/axolotl -v ${HOME}/.cache/huggingface:/root/.cache/huggingface axolotlai/axolotl:main-latest
   ```
 
   It additionally:
   * Prevents memory issues when running e.g. deepspeed (e.g. you could hit SIGBUS/signal 7 error) through `--ipc` and `--ulimit` args.
   * Persists the downloaded HF data (models etc.) and your modifications to axolotl code through `--mount`/`-v` args.
   * The `--name` argument simply makes it easier to refer to the container in vscode (`Dev Containers: Attach to Running Container...`) or in your terminal.
+  * The `--privileged` flag gives all capabilities to the container.
+  * The `--shm-size 10g` argument increases the shared memory size. Use this if you see `exitcode: -7` errors using deepspeed.
 
   [More information on nvidia website](https://docs.nvidia.com/deeplearning/frameworks/user-guide/index.html#setincshmem)
 
   </details>
 
 #### Conda/Pip venv
-  1. Install python >=**3.9**
+  1. Install python >=**3.10**
 
   2. Install pytorch stable https://pytorch.org/get-started/locally/
 
   3. Install Axolotl along with python dependencies
         ```bash
         pip3 install packaging
-        pip3 install -e '.[flash-attn,deepspeed]'
+        pip3 install --no-build-isolation -e '.[flash-attn,deepspeed]'
         ```
   4. (Optional) Login to Huggingface to use gated models/datasets.
         ```bash
@@ -149,7 +328,18 @@ accelerate launch -m axolotl.cli.inference examples/openllama-3b/lora.yml \
         ```
         Get the token at huggingface.co/settings/tokens
 
-#### LambdaLabs
+#### Cloud GPU
+
+For cloud GPU providers that support docker images, use [`axolotlai/axolotl-cloud:main-latest`](https://hub.docker.com/r/axolotlai/axolotl-cloud/tags)
+
+- on Latitude.sh use this [direct link](https://latitude.sh/blueprint/989e0e79-3bf6-41ea-a46b-1f246e309d5c)
+- on JarvisLabs.ai use this [direct link](https://jarvislabs.ai/templates/axolotl)
+- on RunPod use this [direct link](https://runpod.io/gsc?template=v2ickqhz9s&ref=6i7fkpdz)
+
+#### Bare Metal Cloud GPU
+
+##### LambdaLabs
+
   <details>
 
   <summary>Click to Expand</summary>
@@ -157,11 +347,11 @@ accelerate launch -m axolotl.cli.inference examples/openllama-3b/lora.yml \
   1. Install python
   ```bash
   sudo apt update
-  sudo apt install -y python3.9
+  sudo apt install -y python3.10
 
-  sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.9 1
-  sudo update-alternatives --config python # pick 3.9 if given option
-  python -V # should be 3.9
+  sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.10 1
+  sudo update-alternatives --config python # pick 3.10 if given option
+  python -V # should be 3.10
 
   ```
 
@@ -171,173 +361,116 @@ accelerate launch -m axolotl.cli.inference examples/openllama-3b/lora.yml \
   python get-pip.py
   ```
 
-  3. Install torch
-  ```bash
-  pip3 install -U torch --index-url https://download.pytorch.org/whl/cu118
-  ```
+  3. Install Pytorch https://pytorch.org/get-started/locally/
 
-  4. Axolotl
-  ```bash
-  git clone https://github.com/OpenAccess-AI-Collective/axolotl
-  cd axolotl
+  4. Follow instructions on quickstart.
 
-  pip3 install packaging
-  pip3 install -e '.[flash-attn,deepspeed]'
+  5. Run
+  ```bash
   pip3 install protobuf==3.20.3
   pip3 install -U --ignore-installed requests Pillow psutil scipy
   ```
 
-  5. Set path
+  6. Set path
   ```bash
   export LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH
   ```
   </details>
 
-#### Windows
-Please use WSL or Docker!
-
-### Dataset
-
-Axolotl supports a variety of dataset formats. Below are some of the formats you can use.
-Have dataset(s) in one of the following format (JSONL recommended):
-
-- `alpaca`: instruction; input(optional)
-  ```json
-  {"instruction": "...", "input": "...", "output": "..."}
-  ```
-- `sharegpt`: conversations where `from` is `human`/`gpt`
-  ```json
-  {"conversations": [{"from": "...", "value": "..."}]}
-  ```
-- `completion`: raw corpus
-  ```json
-  {"text": "..."}
-  ```
+##### GCP
 
 <details>
 
-<summary>See other formats</summary>
+<summary>Click to Expand</summary>
 
-- `jeopardy`: question and answer
-  ```json
-  {"question": "...", "category": "...", "answer": "..."}
-  ```
-- `oasst`: instruction
-  ```json
-  {"INSTRUCTION": "...", "RESPONSE": "..."}
-  ```
-- `gpteacher`: instruction; input(optional)
-  ```json
-  {"instruction": "...", "input": "...", "response": "..."}
-  ```
-- `reflection`: instruction with reflect; input(optional)
-  ```json
-  {"instruction": "...", "input": "...", "output": "...", "reflection": "...", "corrected": "..."}
-  ```
-- `explainchoice`: question, choices, (solution OR explanation)
-  ```json
-  {"question": "...", "choices": ["..."], "solution": "...", "explanation": "..."}
-  ```
-- `concisechoice`: question, choices, (solution OR explanation)
-  ```json
-  {"question": "...", "choices": ["..."], "solution": "...", "explanation": "..."}
-  ```
-- `summarizetldr`: article and summary
-  ```json
-  {"article": "...", "summary": "..."}
-  ```
-- `alpaca_chat`: basic instruct for alpaca chat
-  ```json
-  {"instruction": "...", "input": "...", "response": "..."}
-  ```
-- `alpaca_chat.load_qa`: question and answer for alpaca chat
-  ```json
-  {"question": "...", "answer": "..."}
-  ```
-- `alpaca_chat.load_concise`: question and answer for alpaca chat, for concise answers
-  ```json
-  {"instruction": "...", "input": "...", "response": "..."}
-  ```
-- `alpaca_chat.load_camel_ai`: question and answer for alpaca chat, for load_camel_ai
-  ```json
-  {"message_1": "...", "message_2": "..."}
-  ```
-- `alpaca_w_system.load_open_orca`: support for open orca datasets with included system prompts, instruct
-  ```json
-  {"system_prompt": "...", "question": "...", "response": "..."}
-  ```
-- `context_qa`: in context question answering from an article
-  ```json
-  {"article": "...", "question": "...", "answer": "..."}
-  ```
-- `context_qa.load_v2`: in context question answering (alternate)
-  ```json
-  {"context": "...", "question": "...", "answer": "..."}
-  ```
-- `context_qa.load_404`: in context question answering from an article, with default response for no answer from context
-  ```json
-  {"article": "...", "unanswerable_question": "..."}
-  ```
-- `creative_acr.load_answer`: instruction and revision
-  ```json
-  {"instruction": "...", "revision": "..."}
-  ```
-- `creative_acr.load_critique`: critique
-  ```json
-  {"scores": "...", "critiques": "...", "instruction": "...", "answer": "..."}
-  ```
-- `creative_acr.load_revise`: critique and revise
-  ```json
-  {"scores": "...", "critiques": "...", "instruction": "...", "answer": "...", "revision": "..."}
-  ```
-- `pygmalion`: pygmalion
-  ```json
-  {"conversations": [{"role": "...", "value": "..."}]}
-  ```
-- `metharme`: instruction, adds additional eos tokens
-  ```json
-  {"prompt": "...", "generation": "..."}
-  ```
-- `sharegpt.load_role`: conversations where `role` is used instead of `from`
-  ```json
-  {"conversations": [{"role": "...", "value": "..."}]}
-  ```
-- `sharegpt.load_guanaco`: conversations where `from` is `prompter`/`assistant` instead of default sharegpt
-  ```json
-  {"conversations": [{"from": "...", "value": "..."}]}
-  ```
-- `sharegpt_jokes`: creates a chat where bot is asked to tell a joke, then explain why the joke is funny
-  ```json
-  {"conversations": [{"title": "...", "text": "...", "explanation": "..."}]}
-  ```
+Use a Deeplearning linux OS with cuda and pytorch installed. Then follow instructions on quickstart.
+
+Make sure to run the below to uninstall xla.
+```bash
+pip uninstall -y torch_xla[tpu]
+```
 
 </details>
 
-#### How to add custom prompts
+#### Windows
+Please use WSL or Docker!
 
-For a dataset that is preprocessed for instruction purposes:
+#### Mac
 
-```json
-{"instruction": "...", "output": "..."}
+Use the below instead of the install method in QuickStart.
+```
+pip3 install --no-build-isolation -e '.'
+```
+More info: [mac.md](/docs/mac.qmd)
+
+#### Google Colab
+
+Please use this example [notebook](examples/colab-notebooks/colab-axolotl-example.ipynb).
+
+#### Launching on public clouds via SkyPilot
+To launch on GPU instances (both on-demand and spot instances) on 7+ clouds (GCP, AWS, Azure, OCI, and more), you can use [SkyPilot](https://skypilot.readthedocs.io/en/latest/index.html):
+
+```bash
+pip install "skypilot-nightly[gcp,aws,azure,oci,lambda,kubernetes,ibm,scp]"  # choose your clouds
+sky check
 ```
 
-You can use this example in your YAML config:
+Get the [example YAMLs](https://github.com/skypilot-org/skypilot/tree/master/llm/axolotl) of using Axolotl to finetune `mistralai/Mistral-7B-v0.1`:
+```
+git clone https://github.com/skypilot-org/skypilot.git
+cd skypilot/llm/axolotl
+```
+
+Use one command to launch:
+```bash
+# On-demand
+HF_TOKEN=xx sky launch axolotl.yaml --env HF_TOKEN
+
+# Managed spot (auto-recovery on preemption)
+HF_TOKEN=xx BUCKET=<unique-name> sky spot launch axolotl-spot.yaml --env HF_TOKEN --env BUCKET
+```
+
+#### Launching on public clouds via dstack
+To launch on GPU instance (both on-demand and spot instances) on public clouds (GCP, AWS, Azure, Lambda Labs, TensorDock, Vast.ai, and CUDO), you can use [dstack](https://dstack.ai/).
+
+Write a job description in YAML as below:
 
 ```yaml
-datasets:
-  - path: repo
-    type:
-      system_prompt: ""
-      field_system: system
-      format: "[INST] {instruction} [/INST]"
-      no_input_format: "[INST] {instruction} [/INST]"
+# dstack.yaml
+type: task
+
+image: axolotlai/axolotl-cloud:main-latest
+
+env:
+  - HUGGING_FACE_HUB_TOKEN
+  - WANDB_API_KEY
+
+commands:
+  - accelerate launch -m axolotl.cli.train config.yaml
+
+ports:
+  - 6006
+
+resources:
+  gpu:
+    memory: 24GB..
+    count: 2
 ```
 
-#### How to use your custom pretokenized dataset
+then, simply run the job with `dstack run` command. Append `--spot` option if you want spot instance. `dstack run` command will show you the instance with cheapest price across multi cloud services:
 
-- Do not pass a `type:`
-- Columns in Dataset must be exactly `input_ids`, `attention_mask`, `labels`
+```bash
+pip install dstack
+HUGGING_FACE_HUB_TOKEN=xxx WANDB_API_KEY=xxx dstack run . -f dstack.yaml # --spot
+```
 
+For further and fine-grained use cases, please refer to the official [dstack documents](https://dstack.ai/docs/) and the detailed description of [axolotl example](https://github.com/dstackai/dstack/tree/master/examples/fine-tuning/axolotl) on the official repository.
+
+### Dataset
+
+Axolotl supports a variety of dataset formats.  It is recommended to use a JSONL.  The schema of the JSONL depends upon the task and the prompt template you wish to use.  Instead of a JSONL, you can also use a HuggingFace dataset with columns for each JSONL field.
+
+See [the documentation](https://axolotl-ai-cloud.github.io/axolotl/docs/dataset-formats/) for more information on how to use different dataset formats.
 
 ### Config
 
@@ -351,22 +484,18 @@ See [examples](examples) for quick start. It is recommended to duplicate and mod
 
 - dataset
   ```yaml
-  sequence_len: 2048 # max token length for prompt
-
-  # huggingface repo
   datasets:
+      # huggingface repo
     - path: vicgalle/alpaca-gpt4
-      type: alpaca # format from earlier
+      type: alpaca
 
-  # huggingface repo with specific configuration/subset
-  datasets:
+      # huggingface repo with specific configuration/subset
     - path: EleutherAI/pile
       name: enron_emails
       type: completion # format from earlier
       field: text # Optional[str] default: text, field to use for completion data
 
-  # huggingface repo with multiple named configurations/subsets
-  datasets:
+      # huggingface repo with multiple named configurations/subsets
     - path: bigcode/commitpackft
       name:
         - ruby
@@ -374,33 +503,41 @@ See [examples](examples) for quick start. It is recommended to duplicate and mod
         - typescript
       type: ... # unimplemented custom format
 
-  # fastchat conversation
-  # See 'conversation' options: https://github.com/lm-sys/FastChat/blob/main/fastchat/conversation.py
-  datasets:
+      # chat_template https://axolotl-ai-cloud.github.io/axolotl/docs/dataset-formats/conversation.html#chat_template
     - path: ...
-      type: sharegpt
-      conversation: chatml
+      type: chat_template
+      chat_template: chatml # defaults to tokenizer's chat_template
 
-  # local
-  datasets:
+      # local
     - path: data.jsonl # or json
       ds_type: json # see other options below
       type: alpaca
 
-  # dataset with splits, but no train split
-  dataset:
+      # dataset with splits, but no train split
     - path: knowrohit07/know_sql
       type: context_qa.load_v2
       train_on_split: validation
+
+      # loading from s3 or gcs
+      # s3 creds will be loaded from the system default and gcs only supports public access
+    - path: s3://path_to_ds # Accepts folder with arrow/parquet or file path like above. Supports s3, gcs.
+      ...
+
+      # Loading Data From a Public URL
+      # - The file format is `json` (which includes `jsonl`) by default. For different formats, adjust the `ds_type` option accordingly.
+    - path: https://some.url.com/yourdata.jsonl # The URL should be a direct link to the file you wish to load. URLs must use HTTPS protocol, not HTTP.
+      ds_type: json # this is the default, see other options below.
   ```
 
 - loading
   ```yaml
   load_in_4bit: true
   load_in_8bit: true
-  bf16: true # require >=ampere
-  fp16: true
+
+  bf16: auto # require >=ampere, auto will detect if your GPU supports this and choose automatically.
+  fp16: # leave empty to use fp16 when bf16 is 'auto'. set to false if you want to fallback to fp32
   tf32: true # require >=ampere
+
   bfloat16: true # require >=ampere, use instead of bf16 when you don't want AMP (automatic mixed precision)
   float16: true # use instead of fp16 when you don't want AMP
   ```
@@ -408,7 +545,7 @@ See [examples](examples) for quick start. It is recommended to duplicate and mod
 
 - lora
   ```yaml
-  adapter: lora # qlora or leave blank for full finetune
+  adapter: lora # 'qlora' or leave blank for full finetune
   lora_r: 8
   lora_alpha: 16
   lora_dropout: 0.05
@@ -417,423 +554,9 @@ See [examples](examples) for quick start. It is recommended to duplicate and mod
     - v_proj
   ```
 
-<details>
+#### All Config Options
 
-<summary>All yaml options (click me)</summary>
-
-```yaml
-# This is the huggingface model that contains *.pt, *.safetensors, or *.bin files
-# This can also be a relative path to a model on disk
-base_model: ./llama-7b-hf
-# You can specify an ignore pattern if the model repo contains more than 1 model type (*.pt, etc)
-base_model_ignore_patterns:
-# If the base_model repo on hf hub doesn't include configuration .json files,
-# You can set that here, or leave this empty to default to base_model
-base_model_config: ./llama-7b-hf
-# You can specify to choose a specific model revision from huggingface hub
-model_revision:
-# Optional tokenizer configuration override in case you want to use a different tokenizer
-# than the one defined in the base model
-tokenizer_config:
-# If you want to specify the type of model to load, AutoModelForCausalLM is a good choice too
-model_type: AutoModelForCausalLM
-# Corresponding tokenizer for the model AutoTokenizer is a good choice
-tokenizer_type: AutoTokenizer
-# Trust remote code for untrusted source
-trust_remote_code:
-# use_fast option for tokenizer loading from_pretrained, default to True
-tokenizer_use_fast:
-# Whether to use the legacy tokenizer setting, defaults to True
-tokenizer_legacy:
-# Resize the model embeddings when new tokens are added to multiples of 32
-# This is reported to improve training speed on some models
-resize_token_embeddings_to_32x:
-
-# Used to identify which the model is based on
-is_falcon_derived_model:
-is_llama_derived_model:
-# Please note that if you set this to true, `padding_side` will be set to "left" by default
-is_mistral_derived_model:
-
-# Whether you are training a 4-bit GPTQ quantized model
-gptq: true
-gptq_groupsize: 128 # group size
-gptq_model_v1: false # v1 or v2
-
-# This will attempt to quantize the model down to 8 bits and use adam 8 bit optimizer
-load_in_8bit: true
-# Use bitsandbytes 4 bit
-load_in_4bit:
-
-# Use CUDA bf16
-bf16: true # bool or 'full' for `bf16_full_eval`. require >=ampere
-# Use CUDA fp16
-fp16: true
-# Use CUDA tf32
-tf32: true # require >=ampere
-
-# No AMP (automatic mixed precision)
-bfloat16: true # require >=ampere
-float16: true
-
-# A list of one or more datasets to finetune the model with
-datasets:
-  # HuggingFace dataset repo | "json" for local dataset, make sure to fill data_files
-  - path: vicgalle/alpaca-gpt4
-  # The type of prompt to use for training. [alpaca, sharegpt, gpteacher, oasst, reflection]
-    type: alpaca # format | format:<prompt_style> (chat/instruct) | <prompt_strategies>.load_<load_fn>
-    ds_type: # Optional[str] (json|arrow|parquet|text|csv) defines the datatype when path is a file
-    data_files: # Optional[str] path to source data files
-    shards: # Optional[int] number of shards to split data into
-    name: # Optional[str] name of dataset configuration to load
-
-    # Optional[str] fastchat conversation type, only used with type: sharegpt
-    conversation:  # Options (see Conversation 'name'): https://github.com/lm-sys/FastChat/blob/main/fastchat/conversation.py
-
-  # Custom user prompt
-  - path: repo
-    type:
-      # The below are defaults. only set what's needed.
-      system_prompt: ""
-      system_format: "{system}"
-      field_system: system
-      field_instruction: instruction
-      field_input: input
-      field_output: output
-
-      # Customizable to be single line or multi-line
-      # 'format' can include {input}
-      format: |-
-        User: {instruction} {input}
-        Assistant:
-      # 'no_input_format' cannot include {input}
-      no_input_format: "{instruction} "
-
-      # For `completion` datsets only, uses the provided field instead of `text` column
-      field:
-
-# Axolotl attempts to save the dataset as an arrow after packing the data together so
-# subsequent training attempts load faster, relative path
-dataset_prepared_path: data/last_run_prepared
-# Push prepared dataset to hub
-push_dataset_to_hub: # repo path
-# The maximum number of processes to use while preprocessing your input dataset. This defaults to `os.cpu_count()`
-# if not set.
-dataset_processes: # defaults to os.cpu_count() if not set
-# push checkpoints to hub
-hub_model_id: # repo path to push finetuned model
-# how to push checkpoints to hub
-# https://huggingface.co/docs/transformers/v4.31.0/en/main_classes/trainer#transformers.TrainingArguments.hub_strategy
-hub_strategy:
-# Whether to use hf `use_auth_token` for loading datasets. Useful for fetching private datasets
-# Required to be true when used in combination with `push_dataset_to_hub`
-hf_use_auth_token: # boolean
-# How much of the dataset to set aside as evaluation. 1 = 100%, 0.50 = 50%, etc. 0 for no eval.
-val_set_size: 0.04
-# Num shards for whole dataset
-dataset_shard_num:
-# Index of shard to use for whole dataset
-dataset_shard_idx:
-
-# The maximum length of an input to train with, this should typically be less than 2048
-# as most models have a token/context limit of 2048
-sequence_len: 2048
-# Pad inputs so each step uses constant sized buffers
-# This will reduce memory fragmentation and may prevent OOMs, by re-using memory more efficiently
-pad_to_sequence_len:
-# Max sequence length to concatenate training samples together up to
-# Inspired by StackLLaMA. see https://huggingface.co/blog/stackllama#supervised-fine-tuning
-# FutureWarning: This will soon be DEPRECATED
-max_packed_sequence_len: 1024
-# Use efficient multi-packing with block diagonal attention and per sequence position_ids. Recommend set to 'true'
-sample_packing:
-# Set to 'false' if getting errors during eval with sample_packing on.
-eval_sample_packing:
-# You can set these packing optimizations AFTER starting a training at least once.
-# The trainer will provide recommended values for these values.
-sample_packing_eff_est:
-total_num_tokens:
-
-# If you want to use 'lora' or 'qlora' or leave blank to train all parameters in original model
-adapter: lora
-# If you already have a lora model trained that you want to load, put that here.
-# This means after training, if you want to test the model, you should set this to the value of `lora_out_dir`.
-lora_model_dir:
-
-# LoRA hyperparameters
-# For more details about the following options, see:
-# https://www.anyscale.com/blog/fine-tuning-llms-lora-or-full-parameter-an-in-depth-analysis-with-llama-2
-lora_r: 8
-lora_alpha: 16
-lora_dropout: 0.05
-lora_target_modules:
-  - q_proj
-  - v_proj
-#  - k_proj
-#  - o_proj
-#  - gate_proj
-#  - down_proj
-#  - up_proj
-lora_target_linear: # If true, will target all linear layers
-
-# If you added new tokens to the tokenizer, you may need to save some LoRA modules because they need to know the new tokens.
-# For LLaMA and Mistral, you need to save `embed_tokens` and `lm_head`. It may vary for other models.
-# `embed_tokens` converts tokens to embeddings, and `lm_head` converts embeddings to token probabilities.
-# https://github.com/huggingface/peft/issues/334#issuecomment-1561727994
-lora_modules_to_save:
-#  - embed_tokens
-#  - lm_head
-
-# Once you complete training, the model will be saved to the following directory.
-# If you merge the adapter to the base model, a subdirectory `merged` will be created under this directory.
-# Make sure `lora_model_dir` points to this directory if you want to use the trained model.
-lora_out_dir:
-lora_fan_in_fan_out: false
-
-# ReLoRA configuration
-# Must use either 'lora' or 'qlora' adapter, and does not support fsdp or deepspeed
-relora_steps: # Number of steps per ReLoRA restart
-relora_warmup_steps: # Number of per-restart warmup steps
-relora_cpu_offload: # True to perform lora weight merges on cpu during restarts, for modest gpu memory savings
-
-# wandb configuration if you're using it
-wandb_mode: # "offline" to save run metadata locally and not sync to the server, "disabled" to turn off wandb
-wandb_project: # Your wandb project name
-wandb_entity: # A wandb Team name if using a Team
-wandb_watch:
-wandb_run_id: # Set the name of your wandb run
-wandb_log_model: # "checkpoint" to log model to wandb Artifacts every `save_steps` or "end" to log only at the end of training
-
-# Where to save the full-finetuned model to
-output_dir: ./completed-model
-
-# Whether to use torch.compile and which backend to use
-torch_compile:  # bool
-torch_compile_backend:  # Optional[str]
-
-# Training hyperparameters
-
-# If greater than 1, backpropagation will be skipped and the gradients will be accumulated for the given number of steps.
-gradient_accumulation_steps: 1
-# The number of samples to include in each batch. This is the number of samples sent to each GPU.
-micro_batch_size: 2
-eval_batch_size:
-num_epochs: 4
-warmup_steps: 100
-learning_rate: 0.00003
-lr_quadratic_warmup:
-logging_steps:
-save_strategy: # Set to `no` to skip checkpoint saves
-save_steps: # Leave empty to save at each epoch
-eval_steps: # Leave empty to eval at each epoch, integers for every N steps. decimal for fraction of total steps
-save_total_limit: # Checkpoints saved at a time
-# Maximum number of iterations to train for. It precedes num_epochs which means that
-# if both are set, num_epochs will not be guaranteed.
-# e.g., when 1 epoch is 1000 steps => `num_epochs: 2` and `max_steps: 100` will train for 100 steps
-max_steps:
-
-eval_table_size: # Approximate number of predictions sent to wandb depending on batch size. Enabled above 0. Default is 0
-eval_table_max_new_tokens: # Total number of tokens generated for predictions sent to wandb. Default is 128
-
-# Save model as safetensors (require safetensors package)
-save_safetensors:
-
-# Whether to mask out or include the human's prompt from the training labels
-train_on_inputs: false
-# Group similarly sized data to minimize padding.
-# May be slower to start, as it must download and sort the entire dataset.
-# Note that training loss may have an oscillating pattern with this enabled.
-group_by_length: false
-
-# Whether to use gradient checkpointing https://huggingface.co/docs/transformers/v4.18.0/en/performance#gradient-checkpointing
-gradient_checkpointing: false
-
-# Stop training after this many evaluation losses have increased in a row
-# https://huggingface.co/transformers/v4.2.2/_modules/transformers/trainer_callback.html#EarlyStoppingCallback
-early_stopping_patience: 3
-
-# Specify a scheduler and kwargs to use with the optimizer
-lr_scheduler: # 'one_cycle' | 'log_sweep' | empty for cosine
-lr_scheduler_kwargs:
-
-# For one_cycle optim
-lr_div_factor: # Learning rate div factor
-
-# For log_sweep optim
-log_sweep_min_lr:
-log_sweep_max_lr:
-
-# Specify optimizer
-# Valid values are driven by the Transformers OptimizerNames class, see:
-# https://github.com/huggingface/transformers/blob/95b374952dc27d8511541d6f5a4e22c9ec11fb24/src/transformers/training_args.py#L134
-#
-# Note that not all optimizers may be available in your environment, ex: 'adamw_anyprecision' is part of
-# torchdistx, 'adamw_bnb_8bit' is part of bnb.optim.Adam8bit, etc. When in doubt, it is recommended to start with the optimizer used
-# in the examples/ for your model and fine-tuning use case.
-#
-# Valid values for 'optimizer' include:
-# - adamw_hf
-# - adamw_torch
-# - adamw_torch_fused
-# - adamw_torch_xla
-# - adamw_apex_fused
-# - adafactor
-# - adamw_anyprecision
-# - sgd
-# - adagrad
-# - adamw_bnb_8bit
-# - lion_8bit
-# - lion_32bit
-# - paged_adamw_32bit
-# - paged_adamw_8bit
-# - paged_lion_32bit
-# - paged_lion_8bit
-optimizer:
-# Specify weight decay
-weight_decay:
-# adamw hyperparams
-adam_beta1:
-adam_beta2:
-adam_epsilon:
-# Gradient clipping max norm
-max_grad_norm:
-
-# Augmentation techniques
-# NEFT https://arxiv.org/abs/2310.05914, set this to a number (paper default is 5) to add noise to embeddings
-# currently only supported on Llama and Mistral
-noisy_embedding_alpha:
-
-# Whether to bettertransformers
-flash_optimum:
-# Whether to use xformers attention patch https://github.com/facebookresearch/xformers:
-xformers_attention:
-# Whether to use flash attention patch https://github.com/Dao-AILab/flash-attention:
-flash_attention:
-flash_attn_cross_entropy:  # Whether to use flash-attention cross entropy implementation - advanced use only
-flash_attn_rms_norm:  # Whether to use flash-attention rms norm implementation - advanced use only
-flash_attn_fuse_qkv: # Whether to fuse QKV into a single operation
-flash_attn_fuse_mlp: # Whether to fuse part of the MLP into a single operation
-# Whether to use scaled-dot-product attention
-# https://pytorch.org/docs/stable/generated/torch.nn.functional.scaled_dot_product_attention.html
-sdp_attention:
-# Landmark attention (only llama)
-landmark_attention:
-# xpos RoPE see https://github.com/kaiokendev/cutoff-len-is-context-len/blob/main/util/xpos_rope_llama_monkey_patch.py
-# LLaMA only
-xpos_rope:
-# RoPE Scaling https://github.com/huggingface/transformers/pull/24653
-rope_scaling:
-  type: # linear | dynamic
-  factor: # float
-
-# Resume from a specific checkpoint dir
-resume_from_checkpoint:
-# If resume_from_checkpoint isn't set and you simply want it to start where it left off.
-# Be careful with this being turned on between different models.
-auto_resume_from_checkpoints: false
-
-# Don't mess with this, it's here for accelerate and torchrun
-local_rank:
-
-# Add or change special tokens.
-# If you add tokens here, you don't need to add them to the `tokens` list.
-special_tokens:
-  # bos_token: "<s>"
-  # eos_token: "</s>"
-  # unk_token: "<unk>"
-
-# Add extra tokens.
-tokens:
-
-# FSDP
-fsdp:
-fsdp_config:
-
-# Deepspeed config path. e.g., deepspeed/zero3.json
-deepspeed:
-
-# Advanced DDP Arguments
-ddp_timeout:
-ddp_bucket_cap_mb:
-ddp_broadcast_buffers:
-
-# Path to torch distx for optim 'adamw_anyprecision'
-torchdistx_path:
-
-# Set to HF dataset for type: 'completion' for streaming instead of pre-tokenize
-pretraining_dataset:
-
-# Debug mode
-debug:
-
-# Seed
-seed:
-
-# Allow overwrite yml config using from cli
-strict:
-```
-
-</details>
-
-<details>
-<summary> Understanding of batch size and gradient accumulation steps </summary>
-<br/>
-Gradient accumulation means accumulating gradients over several mini-batches and updating the model weights afterward. When the samples in each batch are diverse, this technique doesn't significantly impact learning.
-
-This method allows for effective training with larger effective batch sizes without needing proportionally larger memory. Here's why:
-
-1. **Memory Consumption with Batch Size**: The primary reason increasing the batch size impacts memory is due to the storage requirements for intermediate activations. When you forward propagate a batch through a network, you have to store the activations at each layer for each sample in the batch, because these activations are used during backpropagation to compute gradients. Therefore, larger batches mean more activations, leading to greater GPU memory consumption.
-
-2. **Gradient Accumulation**: With gradient accumulation, you're effectively simulating a larger batch size by accumulating gradients over several smaller batches (or micro-batches). However, at any given time, you're only forward and backward propagating a micro-batch. This means you only store activations for the micro-batch, not the full accumulated batch. As a result, you can simulate the effect of a larger batch size without the memory cost of storing activations for a large batch.
-
-**Example 1:**
-Micro batch size: 3
-Gradient accumulation steps: 2
-Number of GPUs: 3
-Total batch size = 3 * 2 * 3 = 18
-
-```
-| GPU 1          | GPU 2          | GPU 3          |
-|----------------|----------------|----------------|
-| S1, S2, S3     | S4, S5, S6     | S7, S8, S9     |
-| e1, e2, e3     | e4, e5, e6     | e7, e8, e9     |
-|----------------|----------------|----------------|
-| → (accumulate) | → (accumulate) | → (accumulate) |
-|----------------|----------------|----------------|
-| S10, S11, S12  | S13, S14, S15  | S16, S17, S18  |
-| e10, e11, e12  | e13, e14, e15  | e16, e17, e18  |
-|----------------|----------------|----------------|
-| → (apply)      | → (apply)      | → (apply)      |
-
-Accumulated gradient for the weight w1 after the second iteration (considering all GPUs):
-Total gradient for w1 = e1 + e2 + e3 + e4 + e5 + e6 + e7 + e8 + e9 + e10 + e11 + e12 + e13 + e14 + e15 + e16 + e17 + e18
-
-Weight update for w1:
-w1_new = w1_old - learning rate x (Total gradient for w1 / 18)
-```
-
-**Example 2:**
-Micro batch size: 2
-Gradient accumulation steps: 1
-Number of GPUs: 3
-Total batch size = 2 * 1 * 3 = 6
-
-```
-| GPU 1     | GPU 2     | GPU 3     |
-|-----------|-----------|-----------|
-| S1, S2    | S3, S4    | S5, S6    |
-| e1, e2    | e3, e4    | e5, e6    |
-|-----------|-----------|-----------|
-| → (apply) | → (apply) | → (apply) |
-
-Accumulated gradient for the weight w1 (considering all GPUs):
-Total gradient for w1 = e1 + e2 + e3 + e4 + e5 + e6
-
-Weight update for w1:
-w1_new = w1_old - learning rate × (Total gradient for w1 / 6)
-```
-
-</details>
+See [these docs](docs/config.qmd) for all config options.
 
 ### Train
 
@@ -842,13 +565,17 @@ Run
 accelerate launch -m axolotl.cli.train your_config.yml
 ```
 
+> [!TIP]
+> You can also reference a config file that is hosted on a public URL, for example `accelerate launch -m axolotl.cli.train https://yourdomain.com/your_config.yml`
+
 #### Preprocess dataset
 
 You can optionally pre-tokenize dataset with the following before finetuning.
 This is recommended for large datasets.
 
-- Set `push_dataset_to_hub: hf_user/repo` to push it to Huggingface.
-- Use `--debug` to see preprocessed examples.
+- Set `dataset_prepared_path:` to a local folder for saving and loading pre-tokenized dataset.
+- (Optional): Set `push_dataset_to_hub: hf_user/repo` to push it to Huggingface.
+- (Optional): Use `--debug` to see preprocessed examples.
 
 ```bash
 python -m axolotl.cli.preprocess your_config.yml
@@ -869,11 +596,11 @@ for deepspeed is available at https://huggingface.co/docs/accelerate/main/en/usa
 We provide several default deepspeed JSON configurations for ZeRO stage 1, 2, and 3.
 
 ```yaml
-deepspeed: deepspeed/zero1.json
+deepspeed: deepspeed_configs/zero1.json
 ```
 
 ```shell
-accelerate launch -m axolotl.cli.train examples/llama-2/config.py --deepspeed deepspeed/zero1.json
+accelerate launch -m axolotl.cli.train examples/llama-2/config.yml --deepspeed deepspeed_configs/zero1.json
 ```
 
 ##### FSDP
@@ -889,7 +616,13 @@ fsdp_config:
   fsdp_transformer_layer_cls_to_wrap: LlamaDecoderLayer
 ```
 
+##### FSDP + QLoRA
+
+Axolotl supports training with FSDP and QLoRA, see [these docs](docs/fsdp_qlora.qmd) for more information.
+
 ##### Weights & Biases Logging
+
+Make sure your `WANDB_API_KEY` environment variable is set (recommended) or you login to wandb with `wandb login`.
 
 - wandb options
 ```yaml
@@ -897,13 +630,68 @@ wandb_mode:
 wandb_project:
 wandb_entity:
 wandb_watch:
-wandb_run_id:
+wandb_name:
 wandb_log_model:
 ```
 
-### Inference
+##### Comet Logging
 
-Pass the appropriate flag to the train command:
+Make sure your `COMET_API_KEY` environment variable is set (recommended) or you login to wandb with `comet login`.
+
+- wandb options
+```yaml
+use_comet:
+comet_api_key:
+comet_workspace:
+comet_project_name:
+comet_experiment_key:
+comet_mode:
+comet_online:
+comet_experiment_config:
+```
+
+##### Special Tokens
+
+It is important to have special tokens like delimiters, end-of-sequence, beginning-of-sequence in your tokenizer's vocabulary.  This will help you avoid tokenization issues and help your model train better.  You can do this in axolotl like this:
+
+```yml
+special_tokens:
+  bos_token: "<s>"
+  eos_token: "</s>"
+  unk_token: "<unk>"
+tokens: # these are delimiters
+  - "<|im_start|>"
+  - "<|im_end|>"
+```
+
+When you include these tokens in your axolotl config, axolotl adds these tokens to the tokenizer's vocabulary.
+
+##### Liger Kernel
+
+Liger Kernel: Efficient Triton Kernels for LLM Training
+
+https://github.com/linkedin/Liger-Kernel
+
+Liger (LinkedIn GPU Efficient Runtime) Kernel is a collection of Triton kernels designed specifically for LLM training.
+It can effectively increase multi-GPU training throughput by 20% and reduces memory usage by 60%. The Liger Kernel
+composes well and is compatible with both FSDP and Deepspeed.
+
+```yaml
+plugins:
+  - axolotl.integrations.liger.LigerPlugin
+liger_rope: true
+liger_rms_norm: true
+liger_glu_activation: true
+liger_layer_norm: true
+liger_fused_linear_cross_entropy: true
+```
+
+### Inference Playground
+
+Axolotl allows you to load your model in an interactive terminal playground for quick experimentation.
+The config file is the same config file used for training.
+
+Pass the appropriate flag to the inference command, depending upon what kind of model was trained:
 
 - Pretrained LORA:
   ```bash
@@ -918,6 +706,10 @@ Pass the appropriate flag to the train command:
   cat /tmp/prompt.txt | python -m axolotl.cli.inference examples/your_config.yml \
     --base_model="./completed-model" --prompter=None --load_in_8bit=True
   ```
+-- With gradio hosting
+  ```bash
+  python -m axolotl.cli.inference examples/your_config.yml --gradio
+  ```
 
 Please use `--sample_packing False` if you have it on and receive the error similar to below:
 
@@ -925,21 +717,23 @@ Please use `--sample_packing False` if you have it on and receive the error simi
 
 ### Merge LORA to base
 
-Add below flag to train command above
+The following command will merge your LORA adapater with your base model. You can optionally pass the argument `--lora_model_dir` to specify the directory where your LORA adapter was saved, otherwhise, this will be inferred from `output_dir` in your axolotl config file.  The merged model is saved in the sub-directory `{lora_model_dir}/merged`.
 
 ```bash
-python3 -m axolotl.cli.merge_lora examples/your_config.yml --lora_model_dir="./completed-model" --load_in_8bit=False --load_in_4bit=False
+python3 -m axolotl.cli.merge_lora your_config.yml --lora_model_dir="./completed-model"
 ```
 
-If you run out of CUDA memory, you can try to merge in system RAM with
+You may need to use the `gpu_memory_limit` and/or `lora_on_cpu` config options to avoid running out of memory. If you still run out of CUDA memory, you can try to merge in system RAM with
 
 ```bash
 CUDA_VISIBLE_DEVICES="" python3 -m axolotl.cli.merge_lora ...
 ```
 
+although this will be very slow, and using the config options above are recommended instead.
+
 ## Common Errors 🧰
 
-See also the [FAQ's](./docs/faq.md).
+See also the [FAQ's](./docs/faq.qmd) and [debugging guide](docs/debugging.qmd).
 
 > If you encounter a 'Cuda out of memory' error, it means your GPU ran out of memory during the training process. Here's how to resolve it:
 
@@ -948,6 +742,10 @@ Please reduce any below
   - `eval_batch_size`
   - `gradient_accumulation_steps`
   - `sequence_len`
+
+If it does not help, try running without deepspeed and without accelerate (replace "accelerate launch" with "python") in the command.
+
+Using adamw_bnb_8bit might also save you some memory.
 
 > `failed (exitcode: -9)`
 
@@ -969,47 +767,28 @@ It's safe to ignore it.
 
 > NCCL Timeouts during training
 
-See the [NCCL](docs/nccl.md) guide.
+See the [NCCL](docs/nccl.qmd) guide.
 
-## Need help? 🙋♂️
 
-Join our [Discord server](https://discord.gg/HhrNrHJPRb) where we can help you
+### Tokenization Mismatch b/w Inference & Training
 
-## Badge ❤🏷️
+For many formats, Axolotl constructs prompts by concatenating token ids _after_ tokenizing strings.  The reason for concatenating token ids rather than operating on strings is to maintain precise accounting for attention masks.
 
-Building something cool with Axolotl? Consider adding a badge to your model card.
+If you decode a prompt constructed by axolotl, you might see spaces between tokens (or lack thereof) that you do not expect, especially around delimiters and special tokens.  When you are starting out with a new format, you should always do the following:
 
-```markdown
-[<img src="https://raw.githubusercontent.com/OpenAccess-AI-Collective/axolotl/main/image/axolotl-badge-web.png" alt="Built with Axolotl" width="200" height="32"/>](https://github.com/OpenAccess-AI-Collective/axolotl)
-```
+1. Materialize some data using `python -m axolotl.cli.preprocess your_config.yml --debug`, and then decode the first few rows with your model's tokenizer.
+2. During inference, right before you pass a tensor of token ids to your model, decode these tokens back into a string.
+3. Make sure the inference string from #2 looks **exactly** like the data you fine tuned on from #1, including spaces and new lines.  If they aren't the same, adjust your inference server accordingly.
+4. As an additional troubleshooting step, you can look at the token ids between 1 and 2 to make sure they are identical.
 
-[<img src="https://raw.githubusercontent.com/OpenAccess-AI-Collective/axolotl/main/image/axolotl-badge-web.png" alt="Built with Axolotl" width="200" height="32"/>](https://github.com/OpenAccess-AI-Collective/axolotl)
+Having misalignment between your prompts during training and inference can cause models to perform very poorly, so it is worth checking this.  See [this blog post](https://hamel.dev/notes/llm/finetuning/05_tokenizer_gotchas.html) for a concrete example.
 
-## Community Showcase
+## Debugging Axolotl
 
-Check out some of the projects and models that have been built using Axolotl! Have a model you'd like to add to our Community Showcase? Open a PR with your model.
+See [this debugging guide](docs/debugging.qmd) for tips on debugging Axolotl, along with an example configuration for debugging with VSCode.
 
-Open Access AI Collective
-- [Minotaur 13b](https://huggingface.co/openaccess-ai-collective/minotaur-13b)
-- [Manticore 13b](https://huggingface.co/openaccess-ai-collective/manticore-13b)
-- [Hippogriff 30b](https://huggingface.co/openaccess-ai-collective/hippogriff-30b-chat)
+## Need help? 🙋
 
-PocketDoc Labs
-- [Dan's PersonalityEngine 13b LoRA](https://huggingface.co/PocketDoc/Dans-PersonalityEngine-13b-LoRA)
+Join our [Discord server](https://discord.gg/HhrNrHJPRb) where our community members can help you.
 
-## Contributing 🤝
-
-Please read the [contributing guide](./.github/CONTRIBUTING.md)
-
-Bugs? Please check the [open issues](https://github.com/OpenAccess-AI-Collective/axolotl/issues/bug) else create a new Issue.
-
-PRs are **greatly welcome**!
-
-Please run below to setup env
-```bash
-pip3 install -r requirements-dev.txt -r requirements-tests.txt
-pre-commit install
-
-# test
-pytest tests/
-```
+Need dedicated support? Please contact us at [✉️wing@axolotl.ai](ailto:wing@axolotl.ai) for dedicated support options.

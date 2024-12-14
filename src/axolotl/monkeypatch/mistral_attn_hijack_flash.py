@@ -2,6 +2,7 @@
 # pylint: disable=duplicate-code
 
 import logging
+from functools import partial
 from typing import List, Optional, Tuple, Union
 
 import torch
@@ -43,6 +44,15 @@ def replace_mistral_attn_with_flash_attn(
         transformers.models.mistral.modeling_mistral.MistralModel.forward = (
             mistral_model_forward
         )
+
+
+def patch_mistral_cross_entropy():
+    from flash_attn.losses.cross_entropy import CrossEntropyLoss
+
+    LOG.info("patching with flash_attn.losses.cross_entropy")
+    transformers.models.mistral.modeling_mistral.CrossEntropyLoss = partial(
+        CrossEntropyLoss, inplace_backward=True
+    )
 
 
 @torch.jit.script
@@ -94,7 +104,7 @@ def _prepare_decoder_attention_mask(
     sliding_window,
 ):  # pylint: disable=unused-argument
     # [bsz, seq_len]
-    if attention_mask is None:
+    if attention_mask is None or sliding_window is None:
         return attention_mask
 
     # NOTE: attention mask and sliding masks are only broadcastable in certain scenarios.
@@ -145,13 +155,13 @@ def flashattn_forward(
     kv_seq_len = key_states.shape[-2]
     if past_key_value is not None:
         kv_seq_len += past_key_value[0].shape[-2]
-    cos, sin = self.rotary_emb(value_states, seq_len=kv_seq_len)
+    cos, sin = self.rotary_emb(value_states, position_ids=position_ids)
     query_states, key_states = apply_rotary_pos_emb(
         query_states, key_states, cos, sin, position_ids
     )
 
     use_sliding_windows = (
-        hasattr(self.config, "sliding_window") is not None
+        getattr(self.config, "sliding_window") is not None
         and kv_seq_len > self.config.sliding_window
     )
 
@@ -201,6 +211,8 @@ def flashattn_forward(
         # only on first autoregressive step q,k,v have same seqlen
         is_causal = key_states.shape == query_states.shape
 
+    dropout_rate = 0.0 if not self.training else getattr(self, "attention_dropout", 0.0)
+
     if cu_seqlens is not None and max_seqlen is not None and cu_seqlens.dim() == 1:
         # special handling using sample packing
         qkv = torch.stack(
@@ -213,7 +225,7 @@ def flashattn_forward(
             qkv,
             cu_seqlens,
             max_seqlen,
-            0.0,
+            dropout_p=dropout_rate,
             softmax_scale=None,
             causal=True,
             window_size=window_size,
@@ -239,7 +251,7 @@ def flashattn_forward(
             qkv_unpad,
             cu_seqlens_q,
             max_seqlen_q,
-            0.0,
+            dropout_p=dropout_rate,
             softmax_scale=None,
             causal=is_causal,
             window_size=window_size,
@@ -253,6 +265,7 @@ def flashattn_forward(
             output = flash_attn_kvpacked_func(
                 query_states,
                 torch.stack([key_states, value_states], 2),
+                dropout_p=dropout_rate,
                 causal=is_causal,
                 window_size=window_size,
             )
@@ -286,7 +299,7 @@ def flashattn_forward(
                 cu_seqlens_k,
                 max_seqlen_q,
                 max_seqlen_k,
-                0.0,
+                dropout_p=dropout_rate,
                 softmax_scale=None,
                 causal=is_causal,
                 window_size=window_size,
@@ -419,6 +432,9 @@ def mistral_model_forward(
     output_attentions: Optional[bool] = None,
     output_hidden_states: Optional[bool] = None,
     return_dict: Optional[bool] = None,
+    cache_position: Optional[  # pylint: disable=unused-argument
+        torch.LongTensor
+    ] = None,
 ) -> Union[Tuple, BaseModelOutputWithPast]:
     output_attentions = (
         output_attentions
@@ -513,24 +529,18 @@ def mistral_model_forward(
         past_key_value = past_key_values[idx] if past_key_values is not None else None
 
         if self.gradient_checkpointing and self.training:
-
-            def create_custom_forward(module):
-                def custom_forward(*inputs):
-                    # None for past_key_value
-                    return module(*inputs)
-
-                return custom_forward
-
-            layer_outputs = torch.utils.checkpoint.checkpoint(
-                create_custom_forward(decoder_layer),
-                hidden_states,
-                attention_mask,
-                position_ids,
-                past_key_value,
-                output_attentions,
-                None,
-                cu_seqlens,
-                max_seqlen,
+            layer_outputs = (
+                self._gradient_checkpointing_func(  # pylint: disable=protected-access
+                    decoder_layer.__call__,
+                    hidden_states,
+                    attention_mask,
+                    position_ids,
+                    past_key_value,
+                    output_attentions,
+                    None,
+                    cu_seqlens,
+                    max_seqlen,
+                )
             )
         else:
             layer_outputs = decoder_layer(

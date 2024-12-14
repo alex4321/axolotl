@@ -6,6 +6,7 @@ import logging
 from dataclasses import dataclass, field
 from typing import Optional
 
+import axolotl.monkeypatch.data.batch_dataset_fetcher  # pylint: disable=unused-import  # noqa: F401
 from axolotl.logging_config import configure_logging
 from axolotl.utils.dict import DictDefault
 from axolotl.utils.models import load_model, load_tokenizer
@@ -22,7 +23,7 @@ class TrainerCliArgs:
 
     debug: bool = field(default=False)
     debug_text_only: bool = field(default=False)
-    debug_num_examples: int = field(default=5)
+    debug_num_examples: int = field(default=0)
     inference: bool = field(default=False)
     merge_lora: bool = field(default=False)
     prompter: Optional[str] = field(default=None)
@@ -39,6 +40,7 @@ class PreprocessCliArgs:
     debug_text_only: bool = field(default=False)
     debug_num_examples: int = field(default=1)
     prompter: Optional[str] = field(default=None)
+    download: Optional[bool] = field(default=True)
 
 
 def load_model_and_tokenizer(
